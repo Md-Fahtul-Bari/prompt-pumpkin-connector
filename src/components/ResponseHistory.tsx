@@ -20,6 +20,19 @@ const ResponseHistory: React.FC<ResponseHistoryProps> = ({ history }) => {
     return null;
   }
 
+  const formatResponse = (response: any) => {
+    if (typeof response === 'string') {
+      return response;
+    } else if (typeof response === 'object') {
+      // Try to intelligently extract meaningful content from the response
+      if (response.message || response.text || response.content || response.data) {
+        return response.message || response.text || response.content || JSON.stringify(response.data);
+      }
+      return JSON.stringify(response, null, 2);
+    }
+    return String(response);
+  };
+
   return (
     <div className="w-full animate-fade-in">
       <Card className="border bg-card/50 backdrop-blur-sm shadow-subtle">
@@ -47,12 +60,9 @@ const ResponseHistory: React.FC<ResponseHistoryProps> = ({ history }) => {
                 {item.response && (
                   <div className="mt-2 pt-2 border-t border-border/50">
                     <h4 className="font-medium text-sm mb-1">Response</h4>
-                    <pre className="text-xs text-muted-foreground overflow-auto p-2 bg-muted/50 rounded">
-                      {typeof item.response === 'object' 
-                        ? JSON.stringify(item.response, null, 2) 
-                        : String(item.response)
-                      }
-                    </pre>
+                    <div className="text-sm text-foreground whitespace-pre-wrap bg-muted/20 p-3 rounded-md">
+                      {formatResponse(item.response)}
+                    </div>
                   </div>
                 )}
               </div>
